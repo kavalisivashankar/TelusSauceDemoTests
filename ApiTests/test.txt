@@ -1,0 +1,42 @@
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import java.io.File;
+
+public class FileUploadExample {
+    public static void main(String[] args) {
+        File file = new File("path/to/file.txt");
+        Response response = RestAssured
+            .given()
+            .multiPart("file", file)
+            .post("https://api.example.com/upload");
+
+        System.out.println(response.getStatusCode());
+        System.out.println(response.asString());
+    }
+}
+import org.junit.jupiter.api.Test;
+import static io.restassured.RestAssured.*;
+import static org.hamcrest.Matchers.*;
+
+public class UserApiTest {
+    @Test
+    public void testCreateAndUpdateUser() {
+        String userId = given()
+            .contentType("application/json")
+            .body("{\"name\": \"Alice\"}")
+            .when()
+            .post("https://api.example.com/users")
+            .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
+
+        given()
+            .contentType("application/json")
+            .body("{\"email\": \"alice@example.com\"}")
+            .when()
+            .put("https://api.example.com/users/" + userId)
+            .then()
+            .statusCode(200);
+    }
+}
